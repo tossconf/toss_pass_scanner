@@ -1,0 +1,143 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.7/krakend.json",
+  "version": 3,
+  "name": "TOSSConf 2026 — QR Scanner API Gateway",
+  "port": 8080,
+  "timeout": "30s",
+  "cache_ttl": "0s",
+  "extra_config": {
+    "telemetry/logging": {
+      "level": "INFO",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    },
+    "security/cors": {
+      "allow_origins": [
+        "*"
+      ],
+      "allow_methods": [
+        "GET",
+        "POST",
+        "OPTIONS"
+      ],
+      "allow_headers": [
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With"
+      ],
+      "expose_headers": [
+        "Content-Length"
+      ],
+      "max_age": "12h"
+    }
+  },
+  "endpoints": [
+    {
+      "__comment": "── QR Scan API (core endpoint — rate-limited) ──────────────────",
+      "endpoint": "/api/scan",
+      "method": "POST",
+      "timeout": "10s",
+      "output_encoding": "no-op",
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "max_rate": 30,
+          "client_max_rate": 10,
+          "strategy": "ip",
+          "capacity": 30,
+          "client_capacity": 10
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/api/scan",
+          "host": [
+            "http://scanner:8000"
+          ],
+          "encoding": "no-op",
+          "method": "POST",
+          "extra_config": {
+            "backend/http": {
+              "return_error_details": "backend"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "__comment": "── Scanner home page ─────────────────────────────────────────────",
+      "endpoint": "/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "host": [
+            "http://scanner:8000"
+          ],
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "__comment": "── Dashboard page ─────────────────────────────────────────────────",
+      "endpoint": "/dashboard/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/dashboard/",
+          "host": [
+            "http://scanner:8000"
+          ],
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "__comment": "── Django admin ───────────────────────────────────────────────────",
+      "endpoint": "/admin/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/admin/",
+          "host": [
+            "http://scanner:8000"
+          ],
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "__comment": "── Static files ────────────────────────────────────────────────────",
+      "endpoint": "/static/{file}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/static/{file}",
+          "host": [
+            "http://scanner:8000"
+          ],
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "__comment": "── Health check endpoint ───────────────────────────────────────────",
+      "endpoint": "/health",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "host": [
+            "http://scanner:8000"
+          ],
+          "encoding": "no-op"
+        }
+      ]
+    }
+  ]
+}

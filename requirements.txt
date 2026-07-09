@@ -1,0 +1,6 @@
+django==5.1
+psycopg2-binary==2.9.9
+gunicorn==22.0.0
+asgiref>=3.8.1,<4
+sqlparse>=0.3.1
+whitenoise>=6.7.0

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOSSConf 2026 — Pass Scanner</title>
+  <meta name="description" content="QR pass scanner for TOSSConf 2026 entry management" />
+  {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/scanner.css' %}" />
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🐃</span>
+      <div>
+        <div class="logo-title">TOSSConf <span class="logo-year">'26</span></div>
+        <div class="logo-sub">Pass Scanner</div>
+      </div>
+    </div>
+    <a href="/dashboard/" class="btn-dash">📊 Dashboard</a>
+  </div>
+</header>
+
+<!-- ── Day Selector ─────────────────────────────────────────────────── -->
+<div class="day-bar">
+  <span class="day-label">Scanning for:</span>
+  <div class="day-pills" id="dayPills">
+    {% for d in event_days %}
+    <button class="day-pill {% if d == event_day %}active{% endif %}"
+            data-day="{{ d }}"
+            onclick="selectDay(this)">
+      {% if d == '2026-07-23' %}Day 1 · Jul 23{% elif d == '2026-07-24' %}Day 2 · Jul 24{% else %}Day 3 · Jul 25{% endif %}
+    </button>
+    {% endfor %}
+  </div>
+  <div class="current-day-badge" id="currentDayBadge">
+    <span id="selectedDayText">
+      {% if event_day %}{{ event_day }}{% else %}Select a day{% endif %}
+    </span>
+  </div>
+</div>
+
+<!-- ── Main Scanner Area ─────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Volunteer name input -->
+  <div class="volunteer-row">
+    <label for="volunteerName">🙋 Volunteer:</label>
+    <input type="text" id="volunteerName" placeholder="Your name (optional)" autocomplete="off" />
+  </div>
+
+  <!-- Camera viewfinder -->
+  <div class="scanner-wrapper" id="scannerWrapper">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <!-- Scan overlay -->
+    <div class="scan-overlay" id="scanOverlay">
+      <div class="scan-frame">
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+        <div class="scan-line" id="scanLine"></div>
+      </div>
+      <p class="scan-hint">Point camera at attendee's QR code</p>
+    </div>
+
+    <!-- Result overlay (success / duplicate / error) -->
+    <div class="result-overlay" id="resultOverlay" style="display:none;">
+      <div class="result-card" id="resultCard">
+        <div class="result-icon" id="resultIcon"></div>
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-message" id="resultMessage"></div>
+        <div class="result-details" id="resultDetails"></div>
+        <button class="btn-scan-again" onclick="resumeScanning()">Scan Next</button>
+      </div>
+    </div>
+
+    <!-- Camera start prompt -->
+    <div class="camera-prompt" id="cameraPrompt">
+      <div class="camera-icon">📷</div>
+      <h2>Start Camera</h2>
+      <p>Click below to activate the camera and start scanning QR codes.</p>
+      <button class="btn-start" onclick="startCamera()" id="startBtn">Start Scanning</button>
+    </div>
+  </div>
+
+  <!-- Status strip -->
+  <div class="status-strip" id="statusStrip">
+    <span class="status-dot idle" id="statusDot"></span>
+    <span id="statusText">Camera not started</span>
+  </div>
+
+  <!-- Recent scans mini log -->
+  <div class="recent-scans" id="recentScans">
+    <h3>Recent Scans (this session)</h3>
+    <ul id="recentList">
+      <li class="empty-state">No scans yet this session.</li>
+    </ul>
+  </div>
+
+</main>
+
+<!-- jsQR library -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script>
+  // ── State ────────────────────────────────────────────────────────────
+  let selectedDay = "{{ event_day|default:'' }}";
+  let scanning = false;
+  let stream = null;
+  let animationId = null;
+  let lastScannedCode = null;
+  let cooldownActive = false;
+  const sessionScans = [];
+
+  const video    = document.getElementById('video');
+  const canvas   = document.getElementById('canvas');
+  const ctx      = canvas.getContext('2d');
+
+  // ── Day selection ───────────────────────────────────────────────────
+  function selectDay(btn) {
+    document.querySelectorAll('.day-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    selectedDay = btn.dataset.day;
+    document.getElementById('selectedDayText').textContent = selectedDay;
+  }
+
+  // ── Camera ──────────────────────────────────────────────────────────
+  async function startCamera() {
+    if (!selectedDay) {
+      alert('Please select an event day before scanning.');
+      return;
+    }
+    document.getElementById('cameraPrompt').style.display = 'none';
+    setStatus('loading', 'Starting camera…');
+
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      });
+      video.srcObject = stream;
+      video.setAttribute('playsinline', true);
+      await video.play();
+      scanning = true;
+      setStatus('active', 'Scanning…');
+      document.getElementById('scanLine').classList.add('animate');
+      tick();
+    } catch (err) {
+      setStatus('error', 'Camera access denied. Please allow camera permissions.');
+      document.getElementById('cameraPrompt').style.display = 'flex';
+    }
+  }
+
+  function tick() {
+    if (!scanning) return;
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'dontInvert'
+      });
+      if (code && !cooldownActive) {
+        handleQR(code.data);
+      }
+    }
+    animationId = requestAnimationFrame(tick);
+  }
+
+  // ── QR Handling ─────────────────────────────────────────────────────
+  async function handleQR(rawData) {
+    if (rawData === lastScannedCode) return;
+    lastScannedCode = rawData;
+    cooldownActive = true;
+    scanning = false;
+
+    setStatus('processing', 'Processing QR…');
+    pauseScanLine();
+
+    const volunteerName = document.getElementById('volunteerName').value.trim();
+
+    try {
+      const resp = await fetch('/api/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          qr_data: rawData,
+          entry_day: selectedDay,
+          scanned_by: volunteerName
+        })
+      });
+      const data = await resp.json();
+      showResult(data);
+    } catch (err) {
+      showResult({ status: 'error', message: 'Network error. Please try again.' });
+    }
+  }
+
+  function showResult(data) {
+    const overlay  = document.getElementById('resultOverlay');
+    const icon     = document.getElementById('resultIcon');
+    const title    = document.getElementById('resultTitle');
+    const msg      = document.getElementById('resultMessage');
+    const details  = document.getElementById('resultDetails');
+    const card     = document.getElementById('resultCard');
+
+    // Reset classes
+    card.className = 'result-card';
+
+    if (data.status === 'success') {
+      card.classList.add('success');
+      icon.textContent = '✅';
+      title.textContent = 'Entry Granted!';
+      msg.textContent = data.message;
+      if (data.attendee) {
+        details.innerHTML = `
+          <div class="att-chip cat-${data.attendee.category.toLowerCase()}">${data.attendee.category}</div>
+          <div class="att-name">${data.attendee.name}</div>
+          <div class="att-email">${data.attendee.email}</div>
+          <div class="att-ticket">${data.attendee.ticket_code}</div>
+        `;
+        addToSessionLog(data.attendee, 'success');
+      }
+      setStatus('active', 'Entry recorded ✓');
+    } else if (data.status === 'duplicate') {
+      card.classList.add('duplicate');
+      icon.textContent = '⚠️';
+      title.textContent = 'Already Checked In';
+      msg.textContent = data.message;
+      if (data.attendee) {
+        details.innerHTML = `
+          <div class="att-chip cat-${data.attendee.category.toLowerCase()}">${data.attendee.category}</div>
+          <div class="att-name">${data.attendee.name}</div>
+          <div class="att-ticket">${data.attendee.ticket_code} · Checked in at ${data.attendee.scanned_at}</div>
+        `;
+      }
+      setStatus('active', 'Duplicate scan');
+    } else {
+      card.classList.add('error');
+      icon.textContent = '❌';
+      title.textContent = data.status === 'invalid' ? 'Invalid Pass' : 'Error';
+      msg.textContent = data.message;
+      details.innerHTML = '';
+      setStatus('error', 'Invalid QR code');
+    }
+
+    overlay.style.display = 'flex';
+    // Auto-resume after 4 seconds for success
+    if (data.status === 'success') {
+      setTimeout(resumeScanning, 4000);
+    }
+  }
+
+  function resumeScanning() {
+    document.getElementById('resultOverlay').style.display = 'none';
+    lastScannedCode = null;
+    cooldownActive = false;
+    scanning = true;
+    setStatus('active', 'Scanning…');
+    resumeScanLine();
+    tick();
+  }
+
+  // ── Session log ──────────────────────────────────────────────────────
+  function addToSessionLog(attendee, type) {
+    sessionScans.unshift({ attendee, type, time: new Date() });
+    renderSessionLog();
+  }
+
+  function renderSessionLog() {
+    const list = document.getElementById('recentList');
+    if (sessionScans.length === 0) {
+      list.innerHTML = '<li class="empty-state">No scans yet this session.</li>';
+      return;
+    }
+    list.innerHTML = sessionScans.slice(0, 10).map(s => `
+      <li class="scan-item ${s.type}">
+        <span class="scan-name">${s.attendee.name}</span>
+        <span class="scan-cat cat-${s.attendee.category.toLowerCase()}">${s.attendee.category}</span>
+        <span class="scan-time">${s.time.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})}</span>
+      </li>
+    `).join('');
+  }
+
+  // ── UI helpers ───────────────────────────────────────────────────────
+  function setStatus(state, text) {
+    const dot  = document.getElementById('statusDot');
+    const span = document.getElementById('statusText');
+    dot.className = 'status-dot ' + state;
+    span.textContent = text;
+  }
+
+  function pauseScanLine() {
+    document.getElementById('scanLine').classList.remove('animate');
+  }
+
+  function resumeScanLine() {
+    document.getElementById('scanLine').classList.add('animate');
+  }
+</script>
+</body>
+</html>

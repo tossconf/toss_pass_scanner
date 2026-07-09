@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TOSSConf 2026 — Entry Dashboard</title>
+  <meta name="description" content="TOSSConf 2026 entry dashboard — real-time attendance stats" />
+  {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+</head>
+<body>
+
+<header class="dash-header">
+  <div class="dash-header-inner">
+    <div class="logo">
+      <span class="logo-icon">🐃</span>
+      <div>
+        <div class="logo-title">TOSSConf <span class="logo-year">'26</span></div>
+        <div class="logo-sub">Entry Dashboard</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="last-updated">Auto-refreshes every 30s</span>
+      <a href="/" class="btn-scan-link">📷 Go to Scanner</a>
+    </div>
+  </div>
+</header>
+
+<main class="dash-main">
+
+  <!-- ── Hero stats ──────────────────────────────────────────────── -->
+  <section class="hero-stats">
+    <div class="stat-card total-card">
+      <div class="stat-icon">🎟️</div>
+      <div class="stat-value">{{ total_unique }}</div>
+      <div class="stat-label">Unique Attendees</div>
+    </div>
+    {% for day in day_stats %}
+    <div class="stat-card day-card">
+      <div class="stat-icon">📅</div>
+      <div class="stat-value">{{ day.total }}</div>
+      <div class="stat-label">{{ day.label }}</div>
+      <div class="cat-breakdown">
+        {% for cat, cnt in day.categories.items %}
+        <span class="cat-tag cat-{{ cat|lower }}">{{ cat }}: {{ cnt }}</span>
+        {% empty %}
+        <span class="cat-tag no-data">No entries yet</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <!-- ── Category totals ─────────────────────────────────────────── -->
+  {% if cat_totals %}
+  <section class="section">
+    <h2 class="section-title">By Category</h2>
+    <div class="cat-cards">
+      {% for cat, cnt in cat_totals.items %}
+      <div class="cat-stat-card cat-border-{{ cat|lower }}">
+        <div class="cat-stat-name">{{ cat }}</div>
+        <div class="cat-stat-value">{{ cnt }}</div>
+        <div class="cat-stat-sub">total entries</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ── Per-day breakdown table ────────────────────────────────── -->
+  <section class="section">
+    <h2 class="section-title">Day-by-Day Summary</h2>
+    <div class="table-card">
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Date</th>
+            <th>Total Entries</th>
+            <th>Breakdown</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for day in day_stats %}
+          <tr>
+            <td><span class="day-badge">{{ day.label|slice:":5" }}</span></td>
+            <td class="mono">{{ day.day }}</td>
+            <td class="big-num">{{ day.total }}</td>
+            <td>
+              {% for cat, cnt in day.categories.items %}
+              <span class="inline-cat cat-{{ cat|lower }}">{{ cat }}: {{ cnt }}</span>
+              {% empty %}—{% endfor %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Recent scans ─────────────────────────────────────────────── -->
+  <section class="section">
+    <h2 class="section-title">Recent Entries <span class="badge-live">LIVE</span></h2>
+    <div class="table-card">
+      {% if recent %}
+      <table class="dash-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ticket</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Day</th>
+            <th>Scanned At</th>
+            <th>By</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in recent %}
+          <tr>
+            <td class="mono dim">{{ forloop.counter }}</td>
+            <td class="mono ticket-code">{{ entry.ticket_code }}</td>
+            <td class="name-cell">{{ entry.name }}</td>
+            <td><span class="cat-chip cat-{{ entry.category|lower }}">{{ entry.category }}</span></td>
+            <td class="mono">{{ entry.entry_day }}</td>
+            <td class="mono">{{ entry.scanned_at|date:"H:i" }}</td>
+            <td class="dim">{{ entry.scanned_by|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-table">
+        <div class="empty-icon">📭</div>
+        <p>No entries recorded yet. Start scanning!</p>
+        <a href="/" class="btn-scan-link">Go to Scanner →</a>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Auto-refresh every 30 seconds
+  setTimeout(() => location.reload(), 30000);
+</script>
+</body>
+</html>
