@@ -76,7 +76,7 @@ def process_qr(request):
     try:
         body = json.loads(request.body)
     except (json.JSONDecodeError, Exception) as ex:
-        return JsonResponse({'status': 'error ' + str(ex), 'message': 'Invalid request body.'}, status=400)
+        return JsonResponse({'status': 'error ' + str(ex), 'message': 'Invalid request body.', 'payload': str(request.body)}, status=400)
 
     qr_raw = body.get('qr_data', '')
     entry_day = body.get('entry_day', '')
