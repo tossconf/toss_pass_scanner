@@ -1,79 +1,144 @@
+version: "3.9"
+
 services:
+
+  traefik:
+    image: traefik:v3.1
+    container_name: tossconf_traefik
+    restart: unless-stopped
+
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      # HTTP
+      - "--entrypoints.web.address=:80"
+
+      # HTTPS
+      - "--entrypoints.websecure.address=:443"
+
+      # Redirect HTTP → HTTPS
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+
+      # Let's Encrypt
+      - "--certificatesresolvers.letsencrypt.acme.email=your@email.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./acme.json:/letsencrypt/acme.json"
+
+    networks:
+      - public
+
   db:
     image: postgres:16-alpine
     container_name: tossconf_db
     restart: unless-stopped
+
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-scanner_db}
       POSTGRES_USER: ${POSTGRES_USER:-scanner_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-scanner_pass}
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-scanner_user} -d ${POSTGRES_DB:-scanner_db}" ]
+      test: ["CMD-SHELL","pg_isready -U ${POSTGRES_USER:-scanner_user} -d ${POSTGRES_DB:-scanner_db}"]
       interval: 5s
       timeout: 5s
       retries: 10
+
     networks:
       - internal
+
 
   scanner:
     build:
       context: .
       dockerfile: Dockerfile
+
     container_name: tossconf_scanner
+
     restart: unless-stopped
-    env_file: .env
+
+    env_file:
+      - .env
+
     environment:
       POSTGRES_HOST: db
       POSTGRES_PORT: "5432"
       TICKETS_DB_PATH: /tickets/tickets.db
+
     volumes:
-      # Read-only mount of the existing tickets.db (from the pass generator)
-      - ../tossconf_pass_generator/tickets.db:/tickets/tickets.db:ro
-      # Persist static files so KrakenD/nginx can serve them if needed
+      - ./tickets.db:/tickets/tickets.db:ro
       - static_files:/app/staticfiles
+
     depends_on:
       db:
         condition: service_healthy
+
+    expose:
+      - "8000"
+
     networks:
       - internal
       - public
-    ports:
-      - "8000:8000"
+
 
   krakend:
     image: devopsfaith/krakend:2.7
+
     container_name: tossconf_krakend
+
     restart: unless-stopped
-    ports:
-      - "8080:8080" # Public entry point
+
+    command:
+      - run
+      - -c
+      - /etc/krakend/krakend.json
+
     volumes:
       - ./krakend/krakend.json:/etc/krakend/krakend.json:ro
-    command: [ "run", "-c", "/etc/krakend/krakend.json" ]
+
+    expose:
+      - "8080"
+
     depends_on:
       - scanner
+
+    labels:
+      - "traefik.enable=true"
+
+      # Change this to your domain
+      - "traefik.http.routers.krakend.rule=Host(`api.tossconf26.kaniyam.com`)"
+
+      - "traefik.http.routers.krakend.entrypoints=websecure"
+
+      - "traefik.http.routers.krakend.tls.certresolver=letsencrypt"
+
+      - "traefik.http.services.krakend.loadbalancer.server.port=8080"
+
     networks:
       - public
-    healthcheck:
-      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8080/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+
 
 volumes:
   postgres_data:
-    name: tossconf_postgres_data
   static_files:
-    name: tossconf_static_files
+
 
 networks:
   internal:
-    name: tossconf_internal
-    driver: bridge
-    internal: true # db & scanner not directly reachable from host
+    internal: true
+
   public:
-    name: tossconf_public
-    driver: bridge # scanner ↔ krakend, krakend ↔ host

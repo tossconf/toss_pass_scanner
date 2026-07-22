@@ -67,7 +67,7 @@ DATABASES = {
 # In Docker this is mounted as a volume; locally falls back to sibling directory
 TICKETS_DB_PATH = os.environ.get(
     'TICKETS_DB_PATH',
-    str(BASE_DIR.parent / 'tossconf_pass_generator' / 'tickets.db')
+    str('tickets.db')
 )
 
 AUTH_PASSWORD_VALIDATORS = [
