@@ -110,16 +110,49 @@
       ]
     },
     {
-      "__comment": "── Static files ────────────────────────────────────────────────────",
-      "endpoint": "/static/{file}",
+      "endpoint": "/static/css/{file}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
-          "url_pattern": "/static/{file}",
-          "host": [
-            "http://scanner:8000"
-          ],
+          "host": ["http://scanner:8000"],
+          "url_pattern": "/static/css/{file}",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/static/js/{file}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "host": ["http://scanner:8000"],
+          "url_pattern": "/static/js/{file}",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/static/images/{file}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "host": ["http://scanner:8000"],
+          "url_pattern": "/static/images/{file}",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/static/admin/{section}/{file}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "host": ["http://scanner:8000"],
+          "url_pattern": "/static/admin/{section}/{file}",
           "encoding": "no-op"
         }
       ]
