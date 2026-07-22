@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   traefik:
-    image: traefik:v3.1
+    image: traefik:v2.9
     container_name: tossconf_traefik
     restart: unless-stopped
 
