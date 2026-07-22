@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'tossconf26-dev-secret-change-in-prod')
 
-DEBUG = 'True'
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
