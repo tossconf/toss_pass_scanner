@@ -23,7 +23,7 @@ services:
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
 
       # Let's Encrypt
-      - "--certificatesresolvers.letsencrypt.acme.email=your@email.com"
+      - "--certificatesresolvers.letsencrypt.acme.email=contact.syedjafer@gmail.com"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
@@ -120,7 +120,7 @@ services:
       - "traefik.enable=true"
 
       # Change this to your domain
-      - "traefik.http.routers.krakend.rule=Host(`api.tossconf26.kaniyam.com`)"
+      - "traefik.http.routers.krakend.rule=Host(`app.parottasalna.com`)"
 
       - "traefik.http.routers.krakend.entrypoints=websecure"
 
