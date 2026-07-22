@@ -56,6 +56,9 @@ TEMPLATES = [
     },
 ]
 
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
+
 WSGI_APPLICATION = 'toss_pass_scanner.wsgi.application'
 
 # ─── Databases ────────────────────────────────────────────────────────────────
