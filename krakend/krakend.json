@@ -161,6 +161,96 @@
       ]
     },
     {
+      "endpoint": "/admin/login/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/login/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/logout/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/logout/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/password_change/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/password_change/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/password_change/done/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/password_change/done/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/jsi18n/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/jsi18n/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/auth/{model}/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/auth/{model}/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/auth/{model}/add/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/auth/{model}/add/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/auth/{model}/{id}/change/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/auth/{model}/{id}/change/",
+        "encoding": "no-op"
+      }]
+    },
+    {
+      "endpoint": "/admin/auth/{model}/{id}/delete/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [{
+        "host": ["http://scanner:8000"],
+        "url_pattern": "/admin/auth/{model}/{id}/delete/",
+        "encoding": "no-op"
+      }]
+    },
+    {
       "__comment": "── Health check endpoint ───────────────────────────────────────────",
       "endpoint": "/health",
       "method": "GET",
