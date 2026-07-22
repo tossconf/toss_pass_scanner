@@ -71,7 +71,7 @@
       ]
     },
     {
-      "__comment": "── Scanner home page ─────────────────────────────────────────────",
+      "__comment": "── General Pages ───────────────────────────────────────────────",
       "endpoint": "/",
       "method": "GET",
       "output_encoding": "no-op",
@@ -92,7 +92,6 @@
       ]
     },
     {
-      "__comment": "── Dashboard page ─────────────────────────────────────────────────",
       "endpoint": "/dashboard/",
       "method": "GET",
       "output_encoding": "no-op",
@@ -113,7 +112,6 @@
       ]
     },
     {
-      "__comment": "── Health check endpoint ───────────────────────────────────────────",
       "endpoint": "/health",
       "method": "GET",
       "output_encoding": "no-op",
@@ -128,7 +126,7 @@
       ]
     },
     {
-      "endpoint": "/static/css/{file}",
+      "endpoint": "/static/{p1}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -136,13 +134,13 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/static/css/{file}",
+          "url_pattern": "/static/{p1}",
           "encoding": "no-op"
         }
       ]
     },
     {
-      "endpoint": "/static/js/{file}",
+      "endpoint": "/static/{p1}/{p2}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -150,13 +148,13 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/static/js/{file}",
+          "url_pattern": "/static/{p1}/{p2}",
           "encoding": "no-op"
         }
       ]
     },
     {
-      "endpoint": "/static/images/{file}",
+      "endpoint": "/static/{p1}/{p2}/{p3}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -164,13 +162,13 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/static/images/{file}",
+          "url_pattern": "/static/{p1}/{p2}/{p3}",
           "encoding": "no-op"
         }
       ]
     },
     {
-      "endpoint": "/static/admin/{section}/{file}",
+      "endpoint": "/static/{p1}/{p2}/{p3}/{p4}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -178,13 +176,13 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/static/admin/{section}/{file}",
+          "url_pattern": "/static/{p1}/{p2}/{p3}/{p4}",
           "encoding": "no-op"
         }
       ]
     },
     {
-      "endpoint": "/static/admin/{section}/{vendor}/{file}",
+      "endpoint": "/static/{p1}/{p2}/{p3}/{p4}/{p5}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
@@ -192,7 +190,7 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/static/admin/{section}/{vendor}/{file}",
+          "url_pattern": "/static/{p1}/{p2}/{p3}/{p4}/{p5}",
           "encoding": "no-op"
         }
       ]
@@ -218,107 +216,7 @@
       ]
     },
     {
-      "endpoint": "/admin/{app}/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/{app}/",
-          "encoding": "no-op"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/autocomplete/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/autocomplete/",
-          "encoding": "no-op"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/jsi18n/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/jsi18n/",
-          "encoding": "no-op"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/r/{content_type_id}/{object_id}/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/r/{content_type_id}/{object_id}/",
-          "encoding": "no-op"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/login/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/login/",
-          "encoding": "no-op"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/login/",
+      "endpoint": "/admin/",
       "method": "POST",
       "output_encoding": "no-op",
       "input_headers": [
@@ -332,14 +230,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/login/",
+          "url_pattern": "/admin/",
           "encoding": "no-op",
           "method": "POST"
         }
       ]
     },
     {
-      "endpoint": "/admin/logout/",
+      "endpoint": "/admin/{p1}",
       "method": "GET",
       "output_encoding": "no-op",
       "input_headers": [
@@ -353,13 +251,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/logout/",
-          "encoding": "no-op"
+          "url_pattern": "/admin/{p1}",
+          "encoding": "no-op",
+          "method": "GET"
         }
       ]
     },
     {
-      "endpoint": "/admin/logout/",
+      "endpoint": "/admin/{p1}",
       "method": "POST",
       "output_encoding": "no-op",
       "input_headers": [
@@ -373,14 +272,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/logout/",
+          "url_pattern": "/admin/{p1}",
           "encoding": "no-op",
           "method": "POST"
         }
       ]
     },
     {
-      "endpoint": "/admin/password_change/",
+      "endpoint": "/admin/{p1}/{p2}",
       "method": "GET",
       "output_encoding": "no-op",
       "input_headers": [
@@ -394,13 +293,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/password_change/",
-          "encoding": "no-op"
+          "url_pattern": "/admin/{p1}/{p2}",
+          "encoding": "no-op",
+          "method": "GET"
         }
       ]
     },
     {
-      "endpoint": "/admin/password_change/",
+      "endpoint": "/admin/{p1}/{p2}",
       "method": "POST",
       "output_encoding": "no-op",
       "input_headers": [
@@ -414,14 +314,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/password_change/",
+          "url_pattern": "/admin/{p1}/{p2}",
           "encoding": "no-op",
           "method": "POST"
         }
       ]
     },
     {
-      "endpoint": "/admin/password_change/done/",
+      "endpoint": "/admin/{p1}/{p2}/{p3}",
       "method": "GET",
       "output_encoding": "no-op",
       "input_headers": [
@@ -435,33 +335,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/password_change/done/",
-          "encoding": "no-op"
+          "url_pattern": "/admin/{p1}/{p2}/{p3}",
+          "encoding": "no-op",
+          "method": "GET"
         }
       ]
     },
     {
-      "endpoint": "/admin/{app}/{model}/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/{app}/{model}/",
-          "encoding": "no-op"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/{app}/{model}/",
+      "endpoint": "/admin/{p1}/{p2}/{p3}",
       "method": "POST",
       "output_encoding": "no-op",
       "input_headers": [
@@ -475,14 +356,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/{app}/{model}/",
+          "url_pattern": "/admin/{p1}/{p2}/{p3}",
           "encoding": "no-op",
           "method": "POST"
         }
       ]
     },
     {
-      "endpoint": "/admin/{app}/{model}/add/",
+      "endpoint": "/admin/{p1}/{p2}/{p3}/{p4}",
       "method": "GET",
       "output_encoding": "no-op",
       "input_headers": [
@@ -496,13 +377,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/{app}/{model}/add/",
-          "encoding": "no-op"
+          "url_pattern": "/admin/{p1}/{p2}/{p3}/{p4}",
+          "encoding": "no-op",
+          "method": "GET"
         }
       ]
     },
     {
-      "endpoint": "/admin/{app}/{model}/add/",
+      "endpoint": "/admin/{p1}/{p2}/{p3}/{p4}",
       "method": "POST",
       "output_encoding": "no-op",
       "input_headers": [
@@ -516,14 +398,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/{app}/{model}/add/",
+          "url_pattern": "/admin/{p1}/{p2}/{p3}/{p4}",
           "encoding": "no-op",
           "method": "POST"
         }
       ]
     },
     {
-      "endpoint": "/admin/{app}/{model}/{id}/change/",
+      "endpoint": "/admin/{p1}/{p2}/{p3}/{p4}/{p5}",
       "method": "GET",
       "output_encoding": "no-op",
       "input_headers": [
@@ -537,13 +419,14 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/{app}/{model}/{id}/change/",
-          "encoding": "no-op"
+          "url_pattern": "/admin/{p1}/{p2}/{p3}/{p4}/{p5}",
+          "encoding": "no-op",
+          "method": "GET"
         }
       ]
     },
     {
-      "endpoint": "/admin/{app}/{model}/{id}/change/",
+      "endpoint": "/admin/{p1}/{p2}/{p3}/{p4}/{p5}",
       "method": "POST",
       "output_encoding": "no-op",
       "input_headers": [
@@ -557,70 +440,9 @@
           "host": [
             "http://scanner:8000"
           ],
-          "url_pattern": "/admin/{app}/{model}/{id}/change/",
+          "url_pattern": "/admin/{p1}/{p2}/{p3}/{p4}/{p5}",
           "encoding": "no-op",
           "method": "POST"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/{app}/{model}/{id}/delete/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/{app}/{model}/{id}/delete/",
-          "encoding": "no-op"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/{app}/{model}/{id}/delete/",
-      "method": "POST",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/{app}/{model}/{id}/delete/",
-          "encoding": "no-op",
-          "method": "POST"
-        }
-      ]
-    },
-    {
-      "endpoint": "/admin/{app}/{model}/{id}/history/",
-      "method": "GET",
-      "output_encoding": "no-op",
-      "input_headers": [
-        "*"
-      ],
-      "input_query_strings": [
-        "*"
-      ],
-      "backend": [
-        {
-          "host": [
-            "http://scanner:8000"
-          ],
-          "url_pattern": "/admin/{app}/{model}/{id}/history/",
-          "encoding": "no-op"
         }
       ]
     }
