@@ -48,6 +48,9 @@
           "client_capacity": 10
         }
       },
+      "input_headers": [
+          "*"
+        ],
       "backend": [
         {
           "url_pattern": "/api/scan",
