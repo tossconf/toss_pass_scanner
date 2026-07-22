@@ -49,8 +49,11 @@
         }
       },
       "input_headers": [
-          "*"
-        ],
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
       "backend": [
         {
           "url_pattern": "/api/scan",
@@ -72,6 +75,12 @@
       "endpoint": "/",
       "method": "GET",
       "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
       "backend": [
         {
           "url_pattern": "/",
@@ -87,6 +96,12 @@
       "endpoint": "/dashboard/",
       "method": "GET",
       "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
       "backend": [
         {
           "url_pattern": "/dashboard/",
@@ -98,13 +113,13 @@
       ]
     },
     {
-      "__comment": "── Django admin ───────────────────────────────────────────────────",
-      "endpoint": "/admin/",
+      "__comment": "── Health check endpoint ───────────────────────────────────────────",
+      "endpoint": "/health",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
-          "url_pattern": "/admin/",
+          "url_pattern": "/",
           "host": [
             "http://scanner:8000"
           ],
@@ -118,7 +133,9 @@
       "output_encoding": "no-op",
       "backend": [
         {
-          "host": ["http://scanner:8000"],
+          "host": [
+            "http://scanner:8000"
+          ],
           "url_pattern": "/static/css/{file}",
           "encoding": "no-op"
         }
@@ -130,7 +147,9 @@
       "output_encoding": "no-op",
       "backend": [
         {
-          "host": ["http://scanner:8000"],
+          "host": [
+            "http://scanner:8000"
+          ],
           "url_pattern": "/static/js/{file}",
           "encoding": "no-op"
         }
@@ -142,196 +161,465 @@
       "output_encoding": "no-op",
       "backend": [
         {
-          "host": ["http://scanner:8000"],
+          "host": [
+            "http://scanner:8000"
+          ],
           "url_pattern": "/static/images/{file}",
           "encoding": "no-op"
         }
       ]
     },
     {
-          "__comment": "── Django Admin: Index & App Views ───────────────────────────────",
-          "endpoint": "/admin/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/{app}/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/autocomplete/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/autocomplete/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/jsi18n/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/jsi18n/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/r/{content_type_id}/{object_id}/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/r/{content_type_id}/{object_id}/", "encoding": "no-op" }]
-        },
-
-        {
-          "__comment": "── Django Admin: Authentication & Passwords ──────────────────────",
-          "endpoint": "/admin/login/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/login/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/login/",
-          "method": "POST",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/login/", "encoding": "no-op", "method": "POST" }]
-        },
-        {
-          "endpoint": "/admin/logout/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/logout/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/logout/",
-          "method": "POST",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/logout/", "encoding": "no-op", "method": "POST" }]
-        },
-        {
-          "endpoint": "/admin/password_change/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/password_change/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/password_change/",
-          "method": "POST",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/password_change/", "encoding": "no-op", "method": "POST" }]
-        },
-        {
-          "endpoint": "/admin/password_change/done/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/password_change/done/", "encoding": "no-op" }]
-        },
-
-        {
-          "__comment": "── Django Admin: Dynamic Model Operations (CRUD & Actions) ───────",
-          "endpoint": "/admin/{app}/{model}/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/",
-          "method": "POST",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/", "encoding": "no-op", "method": "POST" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/add/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/add/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/add/",
-          "method": "POST",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/add/", "encoding": "no-op", "method": "POST" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/{id}/change/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/{id}/change/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/{id}/change/",
-          "method": "POST",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/{id}/change/", "encoding": "no-op", "method": "POST" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/{id}/delete/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/{id}/delete/", "encoding": "no-op" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/{id}/delete/",
-          "method": "POST",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/{id}/delete/", "encoding": "no-op", "method": "POST" }]
-        },
-        {
-          "endpoint": "/admin/{app}/{model}/{id}/history/",
-          "method": "GET",
-          "output_encoding": "no-op",
-          "input_headers": ["*"],
-          "input_query_strings": ["*"],
-          "backend": [{ "host": ["http://scanner:8000"], "url_pattern": "/admin/{app}/{model}/{id}/history/", "encoding": "no-op" }]
-        },
-    {
-      "__comment": "── Health check endpoint ───────────────────────────────────────────",
-      "endpoint": "/health",
+      "endpoint": "/static/admin/{section}/{file}",
       "method": "GET",
       "output_encoding": "no-op",
       "backend": [
         {
-          "url_pattern": "/",
           "host": [
             "http://scanner:8000"
           ],
+          "url_pattern": "/static/admin/{section}/{file}",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/static/admin/{section}/{vendor}/{file}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/static/admin/{section}/{vendor}/{file}",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/autocomplete/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/autocomplete/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/jsi18n/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/jsi18n/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/r/{content_type_id}/{object_id}/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/r/{content_type_id}/{object_id}/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/login/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/login/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/login/",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/login/",
+          "encoding": "no-op",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/logout/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/logout/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/logout/",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/logout/",
+          "encoding": "no-op",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/password_change/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/password_change/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/password_change/",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/password_change/",
+          "encoding": "no-op",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/password_change/done/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/password_change/done/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/",
+          "encoding": "no-op",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/add/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/add/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/add/",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/add/",
+          "encoding": "no-op",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/{id}/change/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/{id}/change/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/{id}/change/",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/{id}/change/",
+          "encoding": "no-op",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/{id}/delete/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/{id}/delete/",
+          "encoding": "no-op"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/{id}/delete/",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/{id}/delete/",
+          "encoding": "no-op",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/admin/{app}/{model}/{id}/history/",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": [
+        "*"
+      ],
+      "input_query_strings": [
+        "*"
+      ],
+      "backend": [
+        {
+          "host": [
+            "http://scanner:8000"
+          ],
+          "url_pattern": "/admin/{app}/{model}/{id}/history/",
           "encoding": "no-op"
         }
       ]
